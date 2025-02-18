@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { FcGoogle } from "react-icons/fc";
-import background from "@/assets/image/bg2.jpeg";
-import logo from "@/assets/image/mbbaylogo.png";
+import background from "../../assets/image/bg2.jpeg";
+import logo from "../../assets/image/mbbaylogo.png";
 import { ToastContainer } from "react-toastify";
 import Sliding from "../Reuseable/Sliding";
 const bg = {
@@ -44,7 +44,7 @@ const LoginAdmin = () => {
             <div className="w-full hidden text-end lg:block">
               <span className="text-gray-600">Don't have an account? </span>
               <a href="#" className="text-blue-500 hover:underline">
-                Sign in
+                Sign up
               </a>
             </div>
           </div>

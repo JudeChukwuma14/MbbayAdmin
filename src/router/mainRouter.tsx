@@ -3,8 +3,6 @@ import Spinner from "../components/common/Spinner";
 import { createBrowserRouter, RouteObject } from "react-router-dom";
 import VendorLayout from "../components/VendorInfo/VendorLayout";
 
-const Home = lazy(()=>import ("../components/Home"))
-
 const Dashboard = lazy(() => import("../components/VendorInfo/Dashboard"));
 const AllOrder = lazy(() => import("../components/VendorInfo/Orders/AllOrder"));
 const OrderDetails = lazy(
@@ -33,23 +31,33 @@ const KycVerification = lazy(
 );
 const Inbox = lazy(() => import("../components/VendorInfo/Inbox"));
 
-const AllPost = lazy(() => import("../components/VendorInfo/Community&Res/AllPost"))
+const AllPost = lazy(
+  () => import("../components/VendorInfo/Community&Res/AllPost")
+);
 
-const Requests = lazy(() => import("../components/VendorInfo/Request/Requests"))
+const Requests = lazy(
+  () => import("../components/VendorInfo/Request/Requests")
+);
 
-const RequestDetail = lazy(() => import("../components/VendorInfo/Request/RequestDetail"))
+const RequestDetail = lazy(
+  () => import("../components/VendorInfo/Request/RequestDetail")
+);
 
-const Review = lazy(()=> import("../components/VendorInfo/Review/Review"))
+const Review = lazy(() => import("../components/VendorInfo/Review/Review"));
 
-const GeneralSetting = lazy(() => import("../components/VendorInfo/Setting/GeneralSetting"))
+const GeneralSetting = lazy(
+  () => import("../components/VendorInfo/Setting/GeneralSetting")
+);
 
-const AllUsers = lazy(() => import("../components/VendorInfo/AllUsers"))
+const AllUsers = lazy(() => import("../components/VendorInfo/AllUsers"));
 
-const AllVendors  = lazy(() => import("../components/VendorInfo/AllVendors"))
+const AllVendors = lazy(() => import("../components/VendorInfo/AllVendors"));
 
-const Profile  = lazy(() => import("../components/VendorInfo/Community&Res/Profile"))
-const SignupAdmin = lazy(()=> import("../components/auth/SignupAdmin")) 
-const LoginAdmin = lazy(()=> import("../components/auth/LoginAdmin"))
+const Profile = lazy(
+  () => import("../components/VendorInfo/Community&Res/Profile")
+);
+const SignupAdmin = lazy(() => import("../components/auth/SignupAdmin"));
+const LoginAdmin = lazy(() => import("../components/auth/LoginAdmin"));
 
 const withSuspense = (Component: React.ComponentType) => (
   <Suspense fallback={<Spinner />}>
@@ -58,15 +66,8 @@ const withSuspense = (Component: React.ComponentType) => (
 );
 
 const routesConfig: RouteObject[] = [
-  
-{
-    path: "/",
-    element:<SignupAdmin/>,
-    children:[
-        {index:true, element:withSuspense(SignupAdmin)},
-        {path:"/login-admin", element:withSuspense(LoginAdmin)}
-    ]
-  },
+  { path: "/", element: withSuspense(SignupAdmin) },
+  { path: "/login-admin", element: withSuspense(LoginAdmin) },
   {
     path: "/app",
     element: <VendorLayout />,
@@ -93,8 +94,5 @@ const routesConfig: RouteObject[] = [
       { path: "profile", element: withSuspense(Profile) },
     ],
   },
-
-
-  ];
-  export const mainRouter = createBrowserRouter(routesConfig);
-  
+];
+export const mainRouter = createBrowserRouter(routesConfig);
