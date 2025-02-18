@@ -48,6 +48,8 @@ const AllUsers = lazy(() => import("../components/VendorInfo/AllUsers"))
 const AllVendors  = lazy(() => import("../components/VendorInfo/AllVendors"))
 
 const Profile  = lazy(() => import("../components/VendorInfo/Community&Res/Profile"))
+const SignupAdmin = lazy(()=> import("../components/auth/SignupAdmin")) 
+const LoginAdmin = lazy(()=> import("../components/auth/LoginAdmin"))
 
 const withSuspense = (Component: React.ComponentType) => (
   <Suspense fallback={<Spinner />}>
@@ -59,9 +61,10 @@ const routesConfig: RouteObject[] = [
   
 {
     path: "/",
-    element:<Home/>,
+    element:<SignupAdmin/>,
     children:[
-        {index:true, element:withSuspense(Home)}
+        {index:true, element:withSuspense(SignupAdmin)},
+        {path:"/login-admin", element:withSuspense(LoginAdmin)}
     ]
   },
   {
