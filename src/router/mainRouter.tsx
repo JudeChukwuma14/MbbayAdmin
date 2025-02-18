@@ -81,6 +81,7 @@ const routesConfig: RouteObject[] = [
       { path: "inbox", element: withSuspense(Inbox) },
       { path: "all-post", element: withSuspense(AllPost) },
       { path: "requests", element: withSuspense(Requests) },
+      // { path: "request-detail/:id", element: withSuspense(RequestDetail) },
       { path: "request-detail", element: withSuspense(RequestDetail) },
       { path: "reviews", element: withSuspense(Review) },
       { path: "general-setting", element: withSuspense(GeneralSetting) },

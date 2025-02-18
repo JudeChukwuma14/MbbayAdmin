@@ -1,7 +1,8 @@
 "use client"
 
 import type React from "react"
-import { useState } from "react"
+import { useState, useMemo } from "react"
+// import { useNavigate } from "react-router-dom"
 import { motion, AnimatePresence } from "framer-motion"
 
 type RequestStatus = "pending" | "approved" | "rejected"
@@ -48,22 +49,37 @@ const initialRequests: VendorRequest[] = [
     status: "rejected",
     createdAt: new Date(Date.now() - 15 * 60000).toISOString(),
   },
+  // Add more sample data to demonstrate pagination
+  ...Array.from({ length: 20 }, (_, i) => ({
+    id: `${i + 5}`,
+    name: `Vendor ${i + 5}`,
+    email: `vendor${i + 5}@example.com`,
+    category: ["Electronics", "Fashion", "Home Decor", "Beauty"][Math.floor(Math.random() * 4)],
+    status: ["pending", "approved", "rejected"][Math.floor(Math.random() * 3)] as RequestStatus,
+    createdAt: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString(),
+  })),
 ]
 
 const RequestPage: React.FC = () => {
   const [requests, setRequests] = useState<VendorRequest[]>(initialRequests)
   const [filter, setFilter] = useState<RequestStatus | "all">("all")
   const [searchTerm, setSearchTerm] = useState("")
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 10
+  // const navigate = useNavigate()
 
-  const handleApprove = (id: string) => {
+  const handleApprove = (id: string, e: React.MouseEvent) => {
+    e.stopPropagation()
     setRequests(requests.map((req) => (req.id === id ? { ...req, status: "approved" } : req)))
   }
 
-  const handleReject = (id: string) => {
+  const handleReject = (id: string, e: React.MouseEvent) => {
+    e.stopPropagation()
     setRequests(requests.map((req) => (req.id === id ? { ...req, status: "rejected" } : req)))
   }
 
-  const handleReserve = (id: string) => {
+  const handleReserve = (id: string, e: React.MouseEvent) => {
+    e.stopPropagation()
     setRequests(
       requests.map((req) =>
         req.id === id
@@ -76,14 +92,26 @@ const RequestPage: React.FC = () => {
     )
   }
 
-  const filteredRequests = requests.filter((req) => {
-    const matchesFilter = filter === "all" || req.status === filter
-    const matchesSearch =
-      req.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      req.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      req.category.toLowerCase().includes(searchTerm.toLowerCase())
-    return matchesFilter && matchesSearch
-  })
+  // const handleRowClick = () => {
+  //   navigate(`/request-detail/${id}`)
+  // }
+  // const handleRowClick = (id: string) => {
+  //   navigate(`/request-detail/${id}`)
+  // }
+
+  const filteredRequests = useMemo(() => {
+    return requests.filter((req) => {
+      const matchesFilter = filter === "all" || req.status === filter
+      const matchesSearch =
+        req.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        req.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        req.category.toLowerCase().includes(searchTerm.toLowerCase())
+      return matchesFilter && matchesSearch
+    })
+  }, [requests, filter, searchTerm])
+
+  const totalPages = Math.ceil(filteredRequests.length / itemsPerPage)
+  const paginatedRequests = filteredRequests.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
 
   return (
     <motion.div
@@ -98,7 +126,10 @@ const RequestPage: React.FC = () => {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           className="w-full sm:w-[180px] p-2 border border-gray-300 rounded-md"
-          onChange={(e) => setFilter(e.target.value as RequestStatus | "all")}
+          onChange={(e) => {
+            setFilter(e.target.value as RequestStatus | "all")
+            setCurrentPage(1)
+          }}
         >
           <option value="all">All</option>
           <option value="pending">Pending</option>
@@ -111,7 +142,10 @@ const RequestPage: React.FC = () => {
           type="text"
           placeholder="Search vendors..."
           value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          onChange={(e) => {
+            setSearchTerm(e.target.value)
+            setCurrentPage(1)
+          }}
           className="w-full sm:w-auto p-2 border border-gray-300 rounded-md"
         />
       </div>
@@ -136,14 +170,16 @@ const RequestPage: React.FC = () => {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            <AnimatePresence>
-              {filteredRequests.map((request) => (
+            <AnimatePresence initial={false}>
+              {paginatedRequests.map((request) => (
                 <motion.tr
                   key={request.id}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
                   transition={{ duration: 0.3 }}
+                  // onClick={() => handleRowClick(request.id)}
+                  className="cursor-pointer hover:bg-gray-50"
                 >
                   <td className="px-6 py-4 whitespace-nowrap">{request.name}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{request.email}</td>
@@ -170,7 +206,7 @@ const RequestPage: React.FC = () => {
                           <motion.button
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
-                            onClick={() => handleApprove(request.id)}
+                            onClick={(e) => handleApprove(request.id, e)}
                             className="bg-green-500 hover:bg-green-600 text-white font-bold py-1 px-2 rounded text-xs"
                           >
                             Approve
@@ -178,7 +214,7 @@ const RequestPage: React.FC = () => {
                           <motion.button
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
-                            onClick={() => handleReject(request.id)}
+                            onClick={(e) => handleReject(request.id, e)}
                             className="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-2 rounded text-xs"
                           >
                             Reject
@@ -189,7 +225,7 @@ const RequestPage: React.FC = () => {
                         <motion.button
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
-                          onClick={() => handleReserve(request.id)}
+                          onClick={(e) => handleReserve(request.id, e)}
                           className="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-1 px-2 rounded text-xs"
                         >
                           Reserve
@@ -203,6 +239,41 @@ const RequestPage: React.FC = () => {
           </tbody>
         </table>
       </motion.div>
+      <div className="mt-4 flex justify-center">
+        <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+          >
+            Previous
+          </motion.button>
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+            <motion.button
+              key={page}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className={`relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium ${
+                page === currentPage ? "text-indigo-600 bg-indigo-50" : "text-gray-700 hover:bg-gray-50"
+              }`}
+              onClick={() => setCurrentPage(page)}
+            >
+              {page}
+            </motion.button>
+          ))}
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+            disabled={currentPage === totalPages}
+          >
+            Next
+          </motion.button>
+        </nav>
+      </div>
     </motion.div>
   )
 }
