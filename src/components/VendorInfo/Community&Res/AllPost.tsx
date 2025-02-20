@@ -4,6 +4,55 @@ import type React from "react"
 import { useState, useRef, useEffect } from "react"
 import EmojiPicker, { type EmojiClickData } from "emoji-picker-react"
 import { motion, AnimatePresence } from "framer-motion"
+import CreatePostModal from "./CreatePostModal"
+import SocialList from "./SocailPost"
+
+
+interface Recommendation {
+  id: string
+  name: string
+  mutuals: number
+  avatar: string
+}
+
+interface Topic {
+  id: string
+  name: string
+}
+
+const recommendations: Recommendation[] = [
+  {
+    id: "1",
+    name: "James Chariton",
+    mutuals: 8,
+    avatar: "/placeholder.svg?height=40&width=40",
+  },
+  {
+    id: "2",
+    name: "Madio Mane",
+    mutuals: 15,
+    avatar: "/placeholder.svg?height=40&width=40",
+  },
+  {
+    id: "3",
+    name: "Javier Afritin",
+    mutuals: 12,
+    avatar: "/placeholder.svg?height=40&width=40",
+  },
+  {
+    id: "4",
+    name: "Terry Jones",
+    mutuals: 15,
+    avatar: "/placeholder.svg?height=40&width=40",
+  },
+]
+
+const topics: Topic[] = [
+  { id: "1", name: "Design" },
+  { id: "2", name: "Beauty & Skincare" },
+  { id: "3", name: "Photography" },
+  { id: "4", name: "Marketing" },
+]
 
 interface User {
   id: string
@@ -85,6 +134,7 @@ function Badge({ children, variant = "default" }: BadgeProps) {
 }
 
 export default function SocialFeed() {
+  const [isModalOpen, setIsModalOpen] = useState(false)
   const [vendors] = useState<User[]>([
     {
       id: "1",
@@ -276,7 +326,7 @@ export default function SocialFeed() {
     <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto grid grid-cols-1 md:grid-cols-[280px_1fr_280px] gap-6 p-4 h-screen">
         {/* Left Sidebar */}
-        <motion.div
+        {/* <motion.div
           className="space-y-6 overflow-y-auto max-h-[calc(100vh-2rem)]"
           initial={{ x: -50, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
@@ -342,7 +392,8 @@ export default function SocialFeed() {
               ))}
             </motion.div>
           </div>
-        </motion.div>
+        </motion.div> */}
+        <SocialList/>
 
         {/* Main Content */}
         <motion.div
@@ -543,53 +594,90 @@ export default function SocialFeed() {
         </motion.div>
 
         {/* Right Sidebar */}
-        <motion.div
-          className="space-y-6"
-          initial={{ x: 50, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          transition={{ duration: 0.5 }}
+        <div className="max-w-md mx-auto bg-gray-100 min-h-screen">
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white p-4 shadow-sm">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center space-x-4">
+            <img src="/placeholder.svg?height=60&width=60" alt="Profile" className="w-12 h-12 rounded-full" />
+            <div>
+              <h2 className="font-semibold">Ogbonna Friskart</h2>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex justify-between mb-4 text-sm">
+          <div className="text-center">
+            <div className="font-bold">201</div>
+            <div className="text-gray-600">Posts</div>
+          </div>
+          <div className="text-center">
+            <div className="font-bold">12</div>
+            <div className="text-gray-600">Followers</div>
+          </div>
+          <div className="text-center">
+            <div className="font-bold">17</div>
+            <div className="text-gray-600">Following</div>
+          </div>
+        </div>
+
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          onClick={() => setIsModalOpen(true)}
+          className="w-full bg-orange-500 text-white py-2 rounded-md font-medium"
         >
-          <motion.div
-            className="bg-white rounded-lg shadow p-4"
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.2 }}
-          >
-            <div className="text-center mb-6">
-              <Avatar
-                src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Screenshot%202025-02-11%20155402-wwKdVWRsVk3GSf9hj0qFBrLAejWRnq.png"
-                alt="Ogbonna Finbarr"
-                size="lg"
-              />
-              <h3 className="font-semibold mt-2">Ogbonna Finbarr</h3>
-            </div>
+          Create Post
+        </motion.button>
+      </motion.div>
 
-            <div className="grid grid-cols-3 gap-4 text-center">
-              <div>
-                <p className="font-bold">201</p>
-                <p className="text-xs text-gray-500">Posts</p>
+      <div className="mt-4 bg-white p-4 shadow-sm">
+        <h3 className="text-sm font-semibold mb-3">RECOMMENDATION</h3>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ staggerChildren: 0.1 }}
+          className="space-y-3"
+        >
+          {recommendations.map((recommendation) => (
+            <motion.div
+              key={recommendation.id}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="flex items-center justify-between"
+            >
+              <div className="flex items-center space-x-2">
+                <img
+                  src={recommendation.avatar || "/placeholder.svg"}
+                  alt={recommendation.name}
+                  className="w-8 h-8 rounded-full"
+                />
+                <span className="text-sm">{recommendation.name}</span>
               </div>
-              <div>
-                <p className="font-bold">12</p>
-                <p className="text-xs text-gray-500">Followers</p>
-              </div>
-              <div>
-                <p className="font-bold">17</p>
-                <p className="text-xs text-gray-500">Following</p>
-              </div>
-            </div>
-          </motion.div>
-
-          <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.4 }}>
-            <h2 className="font-semibold mb-4">TOPICS YOU FOLLOW</h2>
-            <div className="flex flex-wrap gap-2">
-              <Badge>Design</Badge>
-              <Badge>Beauty & Skincare</Badge>
-              <Badge>Photography</Badge>
-              <Badge>Marketing</Badge>
-            </div>
-          </motion.div>
+              <div className="text-xs text-gray-500">{recommendation.mutuals} Mutuals</div>
+            </motion.div>
+          ))}
         </motion.div>
+      </div>
+
+      <div className="mt-4 bg-white p-4 shadow-sm">
+        <h3 className="text-sm font-semibold mb-3">TOPICS YOU FOLLOW</h3>
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-wrap gap-2">
+          {topics.map((topic) => (
+            <motion.span
+              key={topic.id}
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              whileHover={{ scale: 1.05 }}
+              className="px-3 py-1 bg-orange-100 text-orange-600 rounded-full text-sm"
+            >
+              {topic.name}
+            </motion.span>
+          ))}
+        </motion.div>
+      </div>
+
+      <CreatePostModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+    </div>
       </div>
     </div>
   )
