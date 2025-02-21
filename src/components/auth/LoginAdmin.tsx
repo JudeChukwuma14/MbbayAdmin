@@ -1,32 +1,68 @@
-import { useForm } from "react-hook-form";
+import { useForm, SubmitHandler } from "react-hook-form";
 import { FcGoogle } from "react-icons/fc";
 import background from "../../assets/image/bg2.jpeg";
 import logo from "../../assets/image/mbbaylogo.png";
-import { ToastContainer } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import Sliding from "../Reuseable/Sliding";
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { loginAdmin } from "../services/adminApi";
+import { useDispatch } from "react-redux";
+import { setUser } from "../../redux/slices/userSlice";
+
 const bg = {
   backgroundImage: `url(${background})`,
 };
+
 type FormData = {
-  email: string;
+  emailOrPhone: string;
   password: string;
-  terms: boolean;
 };
 
 const LoginAdmin = () => {
+  const dispatch = useDispatch()
+  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<FormData>();
 
-  const onSubmit = (data: FormData) => {
-    console.log(data);
+  const onSubmit: SubmitHandler<FormData> = async (data) => {
+    setIsLoading(true);
+    try {
+      const response = await loginAdmin(data);
+  
+      if (response?.data?.user && response?.data?.token) {
+        dispatch(setUser({ user: response.data.user, token: response.data.token }));
+        toast.success(response.message || "Login successful");
+        navigate("/app");
+      } else {
+       
+        throw new Error("Invalid response format from server");
+      }
+    } catch (error: unknown) {
+      toast.error((error as Error)?.message || "An unexpected error occurred", {
+        position: "top-right",
+        autoClose: 4000,
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
+
+  const handleGoogleLogin = () => {
+    toast.info("Google login not implemented yet", {
+      position: "top-right",
+      autoClose: 3000,
+    });
   };
 
   return (
     <div className="w-full h-screen">
-      {/* ToastContainer for displaying notifications */}
       <ToastContainer />
 
       <div className="flex flex-col md:flex-row">
@@ -38,7 +74,7 @@ const LoginAdmin = () => {
           {/* Logo for small screens */}
           <div className="flex justify-between items-center px-4 my-6">
             <div className="lg:hidden">
-              <img src={logo} width={50} alt="" />
+              <img src={logo} width={50} alt="Logo" />
             </div>
             {/* Sign Up Link */}
             <div className="w-full hidden text-end lg:block">
@@ -52,18 +88,22 @@ const LoginAdmin = () => {
           <div className="flex items-center justify-center">
             <div className="w-full max-w-md p-6">
               <h2 className="text-2xl font-semibold text-left mb-4">Login</h2>
-              <a href="/" className="text-left text-sm">Forgot Passwor?</a>
+              <a href="/" className="text-left text-sm text-blue-500 hover:underline">
+                Forgot Password?
+              </a>
+
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                 <div className="mt-2">
-                  <label className="block text-sm font-medium">Email</label>
+                  <label className="block text-sm font-medium">Email or Phone</label>
                   <input
-                    type="email"
-                    {...register("email", { required: "Email is required" })}
+                    type="text"
+                    {...register("emailOrPhone", {
+                      required: "Email or phone is required",
+                    })}
                     className="w-full p-2 border rounded-md"
+                    placeholder="Enter email or phone"
                   />
-                  <p className="text-red-500 text-sm">
-                    {errors.email?.message}
-                  </p>
+                  <p className="text-red-500 text-sm">{errors.emailOrPhone?.message}</p>
                 </div>
 
                 <div>
@@ -72,41 +112,45 @@ const LoginAdmin = () => {
                     type="password"
                     {...register("password", {
                       required: "Password is required",
-                      minLength: 8,
+                      minLength: {
+                        value: 8,
+                        message: "Password must be at least 8 characters",
+                      },
                     })}
                     className="w-full p-2 border rounded-md"
+                    placeholder="Enter password"
                   />
-                  <p className="text-red-500 text-sm">
-                    {errors.password?.message}
-                  </p>
+                  <p className="text-red-500 text-sm">{errors.password?.message}</p>
                 </div>
 
                 <div className="flex items-center">
-                  <input
-                    type="checkbox"
-                    {...register("terms", { required: true })}
-                    className="mr-2"
-                  />
+                  <input type="checkbox" className="mr-2" />
                   <label className="text-sm">Keep me logged in</label>
                 </div>
-                {errors.terms && (
-                  <p className="text-red-500 text-sm">
-                    You must accept the terms
-                  </p>
-                )}
 
                 <button
                   type="submit"
-                  className="w-full py-2 bg-orange-500 text-white rounded-md"
+                  className="w-full bg-orange-500 text-white p-3 font-semibold rounded-md 
+                  hover:bg-orange-600 transition duration-300 flex items-center justify-center 
+                  disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={isLoading}
                 >
-                  Login
+                  {isLoading ? (
+                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
+                  ) : (
+                    "Login"
+                  )}
                 </button>
               </form>
-              
-              <button className="w-full py-2 mt-4 border rounded-md flex items-center justify-center">
+
+              <button
+                onClick={handleGoogleLogin}
+                className="w-full py-2 mt-4 border rounded-md flex items-center justify-center"
+              >
                 <span className="text-xl">
                   <FcGoogle />
                 </span>
+                <span className="ml-2">Sign in with Google</span>
               </button>
             </div>
           </div>

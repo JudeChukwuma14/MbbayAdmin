@@ -19,3 +19,13 @@ export const createAdmin = async (userData: any) => {
    }
 
 };
+export const loginAdmin = async (userData: any) => {
+  try {
+    const response = await api.post("/login_admin", userData);
+    return response.data;
+  } catch (error: any) {
+    console.error("Signup Error:", error.response?.data || error);
+    throw error.response?.data?.message || "Failed to create account";
+  }
+
+};
