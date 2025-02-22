@@ -3,7 +3,7 @@ import { FcGoogle } from "react-icons/fc";
 import background from "../../assets/image/bg2.jpeg";
 import logo from "../../assets/image/mbbaylogo.png";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Sliding from "../Reuseable/Sliding";
 import { toast, ToastContainer } from "react-toastify";
 import { createAdmin } from "../services/adminApi";
@@ -62,9 +62,11 @@ const SignupAdmin: React.FC = () => {
             {/* Sign Up Link */}
             <div className="w-full hidden text-end lg:block">
               <span className="text-gray-600">Already have an account? </span>
+              <Link to="/login-admin">
               <a href="#" className="text-blue-500 hover:underline">
                 Sign in
               </a>
+              </Link>
             </div>
           </div>
 
