@@ -3,10 +3,11 @@ import { FcGoogle } from "react-icons/fc";
 import background from "../../assets/image/bg2.jpeg";
 import logo from "../../assets/image/mbbaylogo.png";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Sliding from "../Reuseable/Sliding";
 import { toast, ToastContainer } from "react-toastify";
 import { createAdmin } from "../services/adminApi";
+import { motion } from "framer-motion";
 const bg = {
   backgroundImage: `url(${background})`,
 };
@@ -51,7 +52,7 @@ const SignupAdmin: React.FC = () => {
       <ToastContainer />
       <div className="flex flex-col md:flex-row">
         <Sliding />
-        <div
+        <motion.div
           style={bg}
           className="bg-center bg-no-repeat bg-cover w-full min-h-screen px-4 lg:ml-[500px]"
         >
@@ -62,9 +63,11 @@ const SignupAdmin: React.FC = () => {
             {/* Sign Up Link */}
             <div className="w-full hidden text-end lg:block">
               <span className="text-gray-600">Already have an account? </span>
+              <Link to="/login-admin">
               <a href="#" className="text-blue-500 hover:underline">
                 Sign in
               </a>
+              </Link>
             </div>
           </div>
 
@@ -75,11 +78,11 @@ const SignupAdmin: React.FC = () => {
               </h2>
               <p>Sign up with</p>
 
-              <button className="w-full py-2 mb-4 border rounded-md flex items-center justify-center">
+              <motion.button className="w-full py-2 mb-4 border rounded-md flex items-center justify-center">
                 <span className="text-xl">
                   <FcGoogle />
                 </span>
-              </button>
+              </motion.button>
 
               <div className="text-left text-black font-bold mb-4">OR</div>
 
@@ -124,7 +127,7 @@ const SignupAdmin: React.FC = () => {
                 </div>
 
                 <div className="flex items-center">
-                  <input type="checkbox" className="mr-2" />
+                  <motion.input type="checkbox" className="mr-2" />
                   <label className="text-sm">
                     I agree to the{" "}
                     <a href="#" className="text-blue-500">
@@ -134,7 +137,7 @@ const SignupAdmin: React.FC = () => {
                 </div>
 
                 <div className="flex items-center">
-                  <input type="checkbox" className="mr-2" />
+                  <motion.input type="checkbox" className="mr-2" />
                   <label className="text-sm">Keep me logged in</label>
                 </div>
                 <button
@@ -151,7 +154,7 @@ const SignupAdmin: React.FC = () => {
               </form>
             </div>
           </div>
-        </div>
+        </motion.div>
       </div>
     </div>
   );

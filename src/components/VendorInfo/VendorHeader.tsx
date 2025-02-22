@@ -2,12 +2,15 @@ import React, { useState } from "react";
 import { Sun, Moon, Bell, Search, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useDarkMode } from "../Context/DarkModeContext";
+import { useSelector } from "react-redux";
 
 
 
 const VendorHeader: React.FC = () => {
   const { darkMode, toggleDarkMode } = useDarkMode();
   const [showNotifications, setShowNotifications] = useState(false);
+
+  const user = useSelector((state:any)=> state.user)
 
   const notifications= [
     {
@@ -66,7 +69,7 @@ const VendorHeader: React.FC = () => {
       }`}
     >
       <h1 className="text-xl font-semibold">
-        Good Morning, <span className="text-orange-500">Finbarr</span>
+        Good Morning, <span className="text-orange-500">{user.user.name.charAt(0).toUpperCase() + user.user.name.slice("1")}</span>
       </h1>
       <div className="flex items-center gap-4">
         {/* Search Box */}

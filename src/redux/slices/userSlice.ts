@@ -2,11 +2,10 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 // Define the User type
 interface User {
-  id: string; // Or number, depending on your user ID type
+  id: string;
   name: string;
   email: string;
   phoneNumber: string;
-  // Add other user properties as needed
 }
 
 // Define the state type
@@ -15,6 +14,7 @@ interface UserState {
   token: string | null;
 }
 
+// Initial state
 const initialState: UserState = {
   user: null,
   token: null,
@@ -35,5 +35,6 @@ const userSlice = createSlice({
   },
 });
 
+// Export actions and reducer
 export const { setUser, logout } = userSlice.actions;
 export default userSlice.reducer;

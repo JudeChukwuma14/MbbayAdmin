@@ -9,6 +9,7 @@ import { useState } from "react";
 import { loginAdmin } from "../services/adminApi";
 import { useDispatch } from "react-redux";
 import { setUser } from "../../redux/slices/userSlice";
+import { motion } from "framer-motion";
 
 const bg = {
   backgroundImage: `url(${background})`,
@@ -67,7 +68,7 @@ const LoginAdmin = () => {
 
       <div className="flex flex-col md:flex-row">
         <Sliding />
-        <div
+        <motion.div
           style={bg}
           className="bg-center bg-no-repeat bg-cover w-full min-h-screen px-4 lg:ml-[500px]"
         >
@@ -124,7 +125,7 @@ const LoginAdmin = () => {
                 </div>
 
                 <div className="flex items-center">
-                  <input type="checkbox" className="mr-2" />
+                  <motion.input type="checkbox" className="mr-2" />
                   <label className="text-sm">Keep me logged in</label>
                 </div>
 
@@ -143,7 +144,7 @@ const LoginAdmin = () => {
                 </button>
               </form>
 
-              <button
+              <motion.button
                 onClick={handleGoogleLogin}
                 className="w-full py-2 mt-4 border rounded-md flex items-center justify-center"
               >
@@ -151,10 +152,10 @@ const LoginAdmin = () => {
                   <FcGoogle />
                 </span>
                 <span className="ml-2">Sign in with Google</span>
-              </button>
+              </motion.button>
             </div>
           </div>
-        </div>
+        </motion.div>
       </div>
     </div>
   );
